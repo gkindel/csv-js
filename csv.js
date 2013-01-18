@@ -193,7 +193,7 @@
 
     CSV.record_end = function () {
         if( ! (CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED)
-            && CSV.result.length > 1 && CSV.record.length !=  CSV.result[0].length ){
+            && CSV.result.length > 0 && CSV.record.length !=  CSV.result[0].length ){
             CSV.error(CSV.ERROR_EOL);
         }
         CSV.result.push(CSV.record);
