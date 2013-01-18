@@ -12,8 +12,7 @@ Built to the <a href="http://www.ietf.org/rfc/rfc4180.txt">rfc4180</a> standard,
  - ignores garbage following quoted tokens
  - does not enforce a consistent record length
 
-Live example:
-<iframe style="width: 600px; height: 300px; margin: 10px; border: 1px solid #000;" src="http://jsfiddle.net/gkindel/K6kda/embedded/result" frameborder="0"></iframe>
+<a href="http://jsfiddle.net/gkindel/K6kda/">Live example</a> (JsFiddle)
 
 Use:
 ----
