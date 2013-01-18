@@ -12,7 +12,9 @@ Built to the <a href="http://www.ietf.org/rfc/rfc4180.txt">rfc4180</a> standard,
  - ignores garbage following quoted tokens
  - does not enforce a consistent record length
 
-<a href="http://jsfiddle.net/gkindel/K6kda/">Live example</a> (JsFiddle)
+Example:
+----
+<a href="http://jsfiddle.net/gkindel/K6kda/">Live Example</a> (JsFiddle)
 
 Use:
 ----
