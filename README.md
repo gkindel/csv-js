@@ -1,5 +1,5 @@
 #CSV-JS 
-A Comma-Separated Values parser for JS
+A Comma-Separated Values parser for JavaScript
 
 -----
 
