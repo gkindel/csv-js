@@ -60,7 +60,7 @@
      * with options for strictness and data type conversion
      * By default, will automatically type-cast numeric an boolean values.
      * @param {String} str A CSV string
-     * @zreturn {Array} An array records, each of which is an array of scalar values.
+     * @return {Array} An array records, each of which is an array of scalar values.
      * @example
      * // simple
      * var rows = CSV.parse("one,two,three\nfour,five,six")
