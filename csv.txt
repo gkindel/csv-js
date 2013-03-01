@@ -6,4 +6,4 @@ Year,Make,Model,Description,Price
 air, moon roof, loaded",4799.00
 "weird""""quotes ",true,false,123,45.6
 .7,8.,9.1.2,null,undefined
-Null,Undefined,trailing   ,   both   ,   leading
+Null, "ok whitespace outside quotes" ,trailing unquoted  ,   both   ,   leading

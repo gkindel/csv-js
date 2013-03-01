@@ -38,11 +38,12 @@ Options:
 
 CSV.RELAXED
 
-> Enables a "relaxed" strictness mode. Default: `false`
+> Try this first if you're having problems with data parsing. Enables a "relaxed" strictness mode. Default: `false`
 
 - Ignores blank lines;
 - Ignores garbage characters following a close quote
 - Ignores inconsistent records lengths
+- Ignore whitespace around quoted strings.
      
 CSV.IGNORE\_RECORD\_LENGTH
 
@@ -59,6 +60,10 @@ CSV.LINE\_FEED\_OK
 CSV.DETECT\_TYPES
 
 > Automatically type-cast numeric an boolean values such as "false", "null", and "0.1", but not "abcd", "Null", or ".1".  Customizable by overriding CSV.resolve_type(str) which returns value.  Default: `true`
+
+CSV.IGNORE\_QUOTE\_WHITESPACE
+
+> Detects and ignores whitespace before a quoted string which, per spec, should be treated as the start of an unescaped value.  Default: `true`
 
 CSV.DEBUG
 
@@ -85,6 +90,16 @@ Exceptions Thrown:
 > Fired when a record ends before the expected number of fields is read (as determined by first row). Example:
 
 > `Uncaught UNEXPECTED_END_OF_RECORD at char 65 : ,Description,Price\n1997,Ford,E350,"ac, abs, moon"\n `
+
+Warnings:
+----
+
+*"UNEXPECTED\_WHITESPACE"* or `CSV.WARN_WHITESPACE`
+
+> Appears when whitespace is encountered outside of a quoted value, only if CSV.IGNORE_QUOTE_WHITESPACE is disabled. Example:
+
+>`UNEXPECTED_WHITESPACE at char 330 : e,false,123,45.6\n.7,8.,9.1.2,null,undefined\nNull,  "`
+
 
 License:
 ----

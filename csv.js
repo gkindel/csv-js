@@ -33,16 +33,20 @@
     CSV.IGNORE_QUOTES = false;
     CSV.LINE_FEED_OK = true;
     CSV.DETECT_TYPES = true;
+    CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
 
     CSV.ERROR_EOF = "UNEXPECTED_END_OF_FILE";
     CSV.ERROR_CHAR = "UNEXPECTED_CHARACTER";
     CSV.ERROR_EOL = "UNEXPECTED_END_OF_RECORD";
+    CSV.WARN_SPACE = "UNEXPECTED_WHITESPACE"; // not per spec, but helps debugging
 
     var QUOTE = "\"",
         CR = "\r",
         LF = "\n",
-        COMMA = ",";
+        COMMA = ",",
+        SPACE = " ",
+        TAB = "\t";
 
     // states
     var PRE_TOKEN = 0,
@@ -56,7 +60,7 @@
      * with options for strictness and data type conversion
      * By default, will automatically type-cast numeric an boolean values.
      * @param {String} str A CSV string
-     * @return {Array} An array records, each of which is an array of scalar values.
+     * @zreturn {Array} An array records, each of which is an array of scalar values.
      * @example
      * // simple
      * var rows = CSV.parse("one,two,three\nfour,five,six")
@@ -112,6 +116,16 @@
             // pre-token: look for start of escape sequence
             if (CSV.state == PRE_TOKEN) {
 
+                if ( (c === SPACE || c === TAB) && CSV.next_nonspace() == QUOTE ){
+                    if( CSV.RELAXED || CSV.IGNORE_QUOTE_WHITESPACE ) {
+                        continue;
+                    }
+                    else {
+                        // not technically an error, but ambiguous and hard to debug otherwise
+                        CSV.warn(CSV.WARN_SPACE);
+                    }
+                }
+
                 if (c == QUOTE && ! CSV.IGNORE_QUOTES) {
                     CSV.debug("...escaped start", c);
                     CSV.escaped = true;
@@ -162,6 +176,12 @@
                 CSV.token += c;
                 CSV.debug("...add", c, CSV.token);
             }
+            else if ( c === SPACE || c === TAB) {
+                if ( CSV.IGNORE_QUOTE_WHITESPACE )
+                    continue;
+                else
+                    CSV.error(CSV.WARN_SPACE );
+            }
             else if( ! CSV.RELAXED ){
                 CSV.error(CSV.ERROR_CHAR);
             }
@@ -182,6 +202,18 @@
         CSV.offset = null;
         CSV.result = null;
         CSV.str = null;
+    };
+
+    CSV.next_nonspace = function () {
+        var i = CSV.offset;
+        var c;
+        while( i < CSV.str.length ) {
+            c = CSV.str[i++];
+            if( !( c == SPACE || c === TAB ) ){
+                return c;
+            }
+        }
+        return null;
     };
 
     CSV.record_begin = function () {
@@ -237,17 +269,38 @@
             console.log(arguments);
     };
 
-    CSV.error = function (err){
-        var msg = [
-            err , "at char", CSV.offset, ":",
+    CSV.dump = function (msg) {
+        return [
+            msg , "at char", CSV.offset, ":",
             CSV.str.substr(CSV.offset- 50, 50)
                 .replace(/\r/mg,"\\r")
                 .replace(/\n/mg,"\\n")
                 .replace(/\t/mg,"\\t")
         ].join(" ");
+    }
+
+
+    CSV.error = function (err){
+        var msg = CSV.dump(err);
         CSV.reset();
         throw msg;
     };
+
+    CSV.warn = function (err){
+        var msg = CSV.dump(err);
+        try {
+            console.warn( msg )
+            return;
+        } catch (e) {};
+
+        try {
+            console.log( msg )
+            return;
+        } catch (e) {};
+
+
+    };
+
 
     window.CSV = CSV;
 })();
