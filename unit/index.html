@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="lib/ok.js"></script>
+    <script type="text/javascript" src="../csv.js"></script>
+</head>
+<body>
+
+<h3>CSV-JS Test Harness</h3>
+
+<script type="text/javascript">
+        var unit = okjs({
+            exceptions: 0, // enable for debugging
+            verbose: true
+        });
+
+        unit.test("Defaults", function () {
+
+            unit.assert("DETECT_TYPES is true",
+                    CSV.DETECT_TYPES, true);
+
+            unit.assert("IGNORE_QUOTE_WHITESPACE is true",
+                    CSV.IGNORE_QUOTE_WHITESPACE, true);
+
+            unit.assert("IGNORE_QUOTES is false",
+                    CSV.IGNORE_QUOTES, false);
+
+            unit.assert("IGNORE_RECORD_LENGTH is false",
+                    CSV.IGNORE_RECORD_LENGTH, false);
+
+            unit.assert("LINE_FEED_OK is true",
+                    CSV.LINE_FEED_OK, true);
+
+            unit.assert("DETECT_TYPES is true",
+                    CSV.DETECT_TYPES, true);
+
+            unit.assert("RELAXED is false",
+                    CSV.RELAXED, false);
+        });
+
+
+        unit.test("Type Detection", function () {
+
+            CSV.DETECT_TYPES = false;
+            unit.assert("DETECT_TYPES is false", CSV.DETECT_TYPES, false);
+            unit.assert("numbers are strings",
+                    CSV.parse("1,2,3.5,4,5.0.0"),
+                    [["1","2","3.5","4","5.0.0"]] );
+
+            unit.assert("booleans, nulls are strings",
+                    CSV.parse("1,true,null,false"),
+                    [["1","true","null","false"]] );
+
+            CSV.DETECT_TYPES = true;
+            unit.assert("DETECT_TYPES is true", CSV.DETECT_TYPES);
+            unit.assert("numbers",
+                    CSV.parse("1,2,3.5,4,5.0.0"),
+                    [[1,2,3.5,4,"5.0.0"]] );
+
+            unit.assert("leading, trailing or multiple periods are not numbers",
+                    CSV.parse("1,.2,3.,4.5,6.7.8"),
+                    [[1,'.2','3.',4.5,'6.7.8']] );
+
+            unit.assert("booleans, null, unefined",
+                    CSV.parse("1,true,null,false,undefined"),
+                    [[1,true,null,false,undefined]] );
+
+            unit.assert("mixed",
+                    CSV.parse("one,2,three,4"),
+                    [["one",2,"three", 4]] );
+
+        });
+
+
+        unit.test("Single Lines", function () {
+
+            unit.assert("leading/trailing space",
+                    CSV.parse("one  , 2 , three, 4"),
+                    [["one  "," 2 "," three"," 4"]] );
+
+            unit.assert("quotes, escaping",
+                    CSV.parse('1,"2,two","3\nthree","4""four"'),
+                    [[ 1, "2,two", "3\nthree", "4\"four" ]] );
+
+            unit.assert("quotes, escaping",
+                    CSV.parse('1,"2,two","3\nthree","4""four"'),
+                    [[ 1, "2,two", "3\nthree", "4\"four" ]] );
+
+            unit.assert("trailing quotation",
+                    CSV.parse('1",2"'),
+                    [[ '1"', '2"' ]] );
+        });
+
+
+        unit.test("Multiline ", function () {
+            CSV.LINE_FEED_OK = true;
+            unit.assert("CSV.LINE_FEED_OK is true", CSV.LINE_FEED_OK);
+            unit.assert("Standard line delimiter: CRLF",
+                    CSV.parse('1,2,3\r\n4,5,6'),
+                    [[1,2,3],[4,5,6]] );
+
+            var big_example = window.big =
+                    'Year,Make,Model,Description,Price\r\n' +
+                    '1997,Ford,E350,"ac, abs, moon",3000.00\r\n' +
+                    '1999,Chevy,"Venture ""Extended Edition""","",4900.00\r\n' +
+                    '1999,Chevy,"Venture ""Extended Edition, Very Large""",,5000.00\r\n' +
+                    '1996,Jeep,Grand Cherokee,"MUST SELL!\r\nair, moon roof, loaded",4799.00\r\n' +
+                    '"weird""""quotes ",true,false,123,45.6\r\n' +
+                    '.7,8.,9.1.2,null,undefined\r\n' +
+                    'Null, "ok whitespace outside quotes" ,trailing unquoted  ,   both   ,   leading';
+
+            unit.assert("CSV.IGNORE_QUOTE_WHITESPACE is true", CSV.IGNORE_QUOTE_WHITESPACE);
+            unit.assert("Big example test",
+                    CSV.parse(big_example),
+                    [
+                        ['Year', 'Make', 'Model', 'Description', 'Price'],
+                        [1997, 'Ford', 'E350', 'ac, abs, moon', 3000],
+                        [1999,'Chevy', 'Venture "Extended Edition"', '', 4900 ],
+                        [1999,'Chevy', 'Venture "Extended Edition, Very Large"','', 5000],
+                        [1996,'Jeep', 'Grand Cherokee', 'MUST SELL!\r\nair, moon roof, loaded' ,4799],
+                        ['weird""quotes ', true, false, 123,45.6],
+                        ['.7',"8.","9.1.2",null,undefined],
+                        ['Null','ok whitespace outside quotes', 'trailing unquoted  ', '   both   ', '   leading']
+                    ]);
+        });
+
+
+        unit.test("Expected Exceptions",  function () {
+
+            unit.exception("open quote exception", function () {
+                CSV.parse('1,"2')
+            });
+
+            CSV.RELAXED = false;
+            unit.forbid("CSV.RELAXED is false", CSV.RELAXED);
+            unit.exception("blank lines exception", function () {
+                CSV.parse('1,2,3\n\n4,5,6')
+            });
+
+            CSV.IGNORE_RECORD_LENGTH = false;
+            unit.forbid("CSV.IGNORE_RECORD_LENGTH is false", CSV.IGNORE_RECORD_LENGTH);
+            unit.exception("inconsistent record length exception", function () {
+                    CSV.parse('1,2\n4,5,6\n');
+            });
+
+            CSV.IGNORE_QUOTE_WHITESPACE = false;
+            unit.forbid("CSV.IGNORE_QUOTE_WHITESPACE is false", CSV.IGNORE_QUOTE_WHITESPACE);
+            unit.exception("open quote exception", function () {
+                CSV.parse('1,"2" , 3');
+            });
+
+            CSV.LINE_FEED_OK = false;
+            unit.assert("CSV.LINE_FEED_OK is false", CSV.LINE_FEED_OK, false);
+            unit.exception("bare line feeds trigger CSV.ERROR_CHAR", function () {
+                CSV.parse('1,2,3\n4,5,6')
+            });
+
+            CSV.CARRIAGE_RETURN_OK = false;
+            unit.assert("CSV.CARRIAGE_RETURN_OK is false", CSV.CARRIAGE_RETURN_OK, false);
+            unit.exception("bare carriage returns trigger CSV.ERROR_CHAR", function () {
+                CSV.parse('1,2,3\r4,5,6')
+            });
+        });
+
+
+        unit.test("Special Modes", function () {
+
+            CSV.RELAXED = true;
+            unit.assert("CSV.RELAXED is true", CSV.RELAXED);
+            unit.assert("blank linkes ignored",
+                    CSV.parse('1,2,3\n\n4,5,6\n\n'),
+                    [[1,2,3],[4,5,6]]);
+
+            unit.assert("inconsistent record length",
+                    CSV.parse('1,2\n4,5,6\n'),
+                    [[1,2],[4,5,6]]);
+
+            CSV.IGNORE_QUOTE_WHITESPACE = true;
+            unit.assert("CSV.IGNORE_QUOTE_WHITESPACE is true", CSV.IGNORE_QUOTE_WHITESPACE);
+            unit.assert("ignore trailing whitespace after quotes",
+                    CSV.parse('1,"2" , "3"'),
+                    [[1,2,3]] );
+
+            CSV.LINE_FEED_OK = true;
+            unit.assert("CSV.LINE_FEED_OK is true", CSV.LINE_FEED_OK);
+
+            unit.assert("line feeds accepted w/o carriage return",
+                    CSV.parse('1,2,3\n4,5,6'),
+                    [[1,2,3],[4,5,6]] );
+
+            CSV.CARRIAGE_RETURN_OK = true;
+            unit.assert("CSV.CARRIAGE_RETURN_OK is true", CSV.CARRIAGE_RETURN_OK);
+            unit.assert("carriage return accepted w/o line feed",
+                    CSV.parse('1,2,3\r4,5,6'),
+                    [[1,2,3],[4,5,6]] );
+
+
+            CSV.TAB_DELIMITED = true;
+
+        });
+
+        unit.start()
+
+    </script>
+
+</body>
+</html>

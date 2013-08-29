@@ -57,6 +57,10 @@ CSV.LINE\_FEED\_OK
 
 > Suppress exception for missing carriage returns (specification requires CRLF line endings). Default: `true`
 
+CSV.CARRIAGE\_RETURN\_OK
+
+> Suppress exception for missing line feeds (specification requires CRLF line endings). Default: `true`
+
 CSV.DETECT\_TYPES
 
 > Automatically type-cast numeric an boolean values such as "false", "null", and "0.1", but not "abcd", "Null", or ".1".  Customizable by overriding CSV.resolve_type(str) which returns value.  Default: `true`

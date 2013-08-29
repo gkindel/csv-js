@@ -32,6 +32,7 @@
     CSV.IGNORE_RECORD_LENGTH = false;
     CSV.IGNORE_QUOTES = false;
     CSV.LINE_FEED_OK = true;
+    CSV.CARRIAGE_RETURN_OK = true;
     CSV.DETECT_TYPES = true;
     CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
@@ -157,39 +158,34 @@
             }
 
             // fall-through: mid-token or post-token, not escaped
-            if (c == CR && str[CSV.offset + 1] == LF) {
-                CSV.offset++;
-                CSV.state = POST_RECORD;
+            if (c == CR ) {
+                if( str[CSV.offset] == LF  )
+                    CSV.offset++;
+                else if( ! CSV.CARRIAGE_RETURN_OK )
+                    CSV.error(CSV.ERROR_CHAR);
                 CSV.token_end();
+                CSV.record_end();
             }
             else if (c == LF) {
                 if( ! (CSV.LINE_FEED_OK || CSV.RELAXED) )
                     CSV.error(CSV.ERROR_CHAR);
                 CSV.token_end();
-                CSV.state = POST_RECORD;
+                CSV.record_end();
             }
             else if (c == COMMA) {
                 CSV.token_end();
-                continue;
             }
             else if( CSV.state == MID_TOKEN ){
                 CSV.token += c;
                 CSV.debug("...add", c, CSV.token);
             }
             else if ( c === SPACE || c === TAB) {
-                if ( CSV.IGNORE_QUOTE_WHITESPACE )
-                    continue;
-                else
+                if (! CSV.IGNORE_QUOTE_WHITESPACE )
                     CSV.error(CSV.WARN_SPACE );
             }
             else if( ! CSV.RELAXED ){
                 CSV.error(CSV.ERROR_CHAR);
             }
-
-            if( CSV.state == POST_RECORD ){
-                CSV.record_end();
-            }
-
         }
         return result;
     };
@@ -224,6 +220,7 @@
     };
 
     CSV.record_end = function () {
+        CSV.state = POST_RECORD;
         if( ! (CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED)
             && CSV.result.length > 0 && CSV.record.length !=  CSV.result[0].length ){
             CSV.error(CSV.ERROR_EOL);
@@ -277,8 +274,7 @@
                 .replace(/\n/mg,"\\n")
                 .replace(/\t/mg,"\\t")
         ].join(" ");
-    }
-
+    };
 
     CSV.error = function (err){
         var msg = CSV.dump(err);
@@ -289,15 +285,13 @@
     CSV.warn = function (err){
         var msg = CSV.dump(err);
         try {
-            console.warn( msg )
+            console.warn( msg );
             return;
-        } catch (e) {};
+        } catch (e) {}
 
         try {
-            console.log( msg )
-            return;
-        } catch (e) {};
-
+            console.log( msg );
+        } catch (e) {}
 
     };
 
