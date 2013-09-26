@@ -20,7 +20,7 @@ Use:
 ----
 Simple:
 
-        var rows = CSV.parse("one,two,three\4,5,6")
+        var rows = CSV.parse("one,two,three\n4,5,6")
         // rows equals [["one","two","three"],[4,5,6]]
 
 jQuery AJAX suggestion:
