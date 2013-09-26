@@ -14,7 +14,7 @@ Built to the <a href="http://www.ietf.org/rfc/rfc4180.txt">rfc4180</a> standard,
 
 Example:
 ----
-<a href="http://jsfiddle.net/gkindel/K6kda/">Live Example</a> (JsFiddle)
+[Live Example](http://gkindel.github.io/CSV-JS/csv.html)
 
 Use:
 ----
@@ -104,6 +104,9 @@ Warnings:
 
 >`UNEXPECTED_WHITESPACE at char 330 : e,false,123,45.6\n.7,8.,9.1.2,null,undefined\nNull,  "`
 
+Unit Test:
+----
+[Unit Test](http://gkindel.github.io/CSV-JS/unit/)
 
 License:
 ----
