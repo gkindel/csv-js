@@ -295,6 +295,13 @@
 
     };
 
+    (function(name, context, definition) {
+            if (typeof module != 'undefined' && module.exports) module.exports = definition();
+            else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
+            else this[name] = definition();
+        }('CSV', this, function()
+            { return CSV; }
+        )
+    );
 
-    window.CSV = CSV;
 })();
