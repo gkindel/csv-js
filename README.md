@@ -73,6 +73,10 @@ CSV.DEBUG
 
 > Enables debug logging to console.  Default: `false`
 
+CSV.COLUMN\_SEPARATOR
+
+> Split columns by this character. Default "," (comma).
+
 Exceptions Thrown:
 ----
 

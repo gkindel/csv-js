@@ -37,6 +37,8 @@
     CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
 
+    CSV.COLUMN_SEPARATOR = ","
+
     CSV.ERROR_EOF = "UNEXPECTED_END_OF_FILE";
     CSV.ERROR_CHAR = "UNEXPECTED_CHARACTER";
     CSV.ERROR_EOL = "UNEXPECTED_END_OF_RECORD";
@@ -45,7 +47,6 @@
     var QUOTE = "\"",
         CR = "\r",
         LF = "\n",
-        COMMA = ",",
         SPACE = " ",
         TAB = "\t";
 
@@ -172,7 +173,7 @@
                 CSV.token_end();
                 CSV.record_end();
             }
-            else if (c == COMMA) {
+            else if (c == CSV.COLUMN_SEPARATOR) {
                 CSV.token_end();
             }
             else if( CSV.state == MID_TOKEN ){

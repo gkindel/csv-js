@@ -37,6 +37,9 @@
 
             unit.assert("RELAXED is false",
                     CSV.RELAXED, false);
+
+            unit.assert("COLUMN_SEPARATOR is the comma",
+                    CSV.COLUMN_SEPARATOR, ",");
         });
 
 
@@ -125,6 +128,16 @@
                     ]);
         });
 
+        unit.test("Custom COLUMN_SEPARATOR", function () {
+            var originalSeparator = CSV.COLUMN_SEPARATOR;
+            CSV.COLUMN_SEPARATOR = ";"
+
+            unit.assert("Using semi-colons",
+                    CSV.parse('1;2;3\r\n"foo";22;"bar"'),
+                    [[1,2,3],["foo",22,"bar"]] );
+
+            CSV.COLUMN_SEPARATOR = originalSeparator;
+        });
 
         unit.test("Expected Exceptions",  function () {
 
