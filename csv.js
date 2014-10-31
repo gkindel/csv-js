@@ -22,6 +22,7 @@
  */
 
 (function () {
+    'use strict';
     /**
      * @name CSV
      * @namespace
@@ -299,8 +300,8 @@
     (function(name, context, definition) {
             if (typeof module != 'undefined' && module.exports) module.exports = definition();
             else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
-            else this[name] = definition();
-        }('CSV', this, function()
+            else context[name] = definition();
+        }('CSV', Function('return this')(), function()
             { return CSV; }
         )
     );
