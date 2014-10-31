@@ -235,7 +235,7 @@
         if( token.match(/^\d+(\.\d+)?$/) ){
             token = parseFloat(token);
         }
-        else if( token.match(/^true|false$/i) ){
+        else if( token.match(/^(true|false)$/i) ){
             token = Boolean( token.match(/true/i) );
         }
         else if(token === "undefined" ){
