@@ -94,7 +94,7 @@
             CSV.debug("c", c);
 
             // detect eof
-            if (c === null) {
+            if (c == null) {
                 if (CSV.escaped)
                     CSV.error(CSV.ERROR_EOF);
 
@@ -108,7 +108,7 @@
                 break;
             }
 
-            if (CSV.record === null) {
+            if (CSV.record == null) {
                 // if relaxed mode, ignore blank lines
                 if (CSV.RELAXED && (c == LF || c == CR && str[CSV.offset + 1] == LF)) {
                     continue;
