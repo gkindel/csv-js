@@ -38,7 +38,7 @@
     CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
 
-    CSV.COLUMN_SEPARATOR = ","
+    CSV.COLUMN_SEPARATOR = ",";
 
     CSV.ERROR_EOF = "UNEXPECTED_END_OF_FILE";
     CSV.ERROR_CHAR = "UNEXPECTED_CHARACTER";
@@ -223,8 +223,7 @@
 
     CSV.record_end = function () {
         CSV.state = POST_RECORD;
-        if( ! (CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED)
-            && CSV.result.length > 0 && CSV.record.length !=  CSV.result[0].length ){
+        if( ! (CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED) && CSV.result.length > 0 && CSV.record.length !=  CSV.result[0].length ){
             CSV.error(CSV.ERROR_EOL);
         }
         CSV.result.push(CSV.record);
@@ -298,10 +297,11 @@
     };
 
     (function(name, context, definition) {
+        var define;
             if (typeof module != 'undefined' && module.exports) module.exports = definition();
             else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
             else context[name] = definition();
-        }('CSV', Function('return this')(), function()
+        }('CSV', function(){return this;}(), function()
             { return CSV; }
         )
     );
