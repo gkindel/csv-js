@@ -21,7 +21,7 @@
  Author Greg Kindel (twitter @gkindel), 2013
  */
 
-(function () {
+(function() {
     'use strict';
     /**
      * @name CSV
@@ -38,7 +38,7 @@
     CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
 
-    CSV.COLUMN_SEPARATOR = ","
+    CSV.COLUMN_SEPARATOR = ",";
 
     CSV.ERROR_EOF = "UNEXPECTED_END_OF_FILE";
     CSV.ERROR_CHAR = "UNEXPECTED_CHARACTER";
@@ -79,7 +79,7 @@
      *  });
      * @see http://www.ietf.org/rfc/rfc4180.txt
      */
-    CSV.parse = function (str) {
+    CSV.parse = function(str) {
         var result = CSV.result = [];
         CSV.offset = 0;
         CSV.str = str;
@@ -88,17 +88,17 @@
         CSV.debug("parse()", str);
 
         var c;
-        while( 1 ){
+        while (1) {
             // pull char
             c = str[CSV.offset++];
             CSV.debug("c", c);
 
             // detect eof
             if (c == null) {
-                if( CSV.escaped )
+                if (CSV.escaped)
                     CSV.error(CSV.ERROR_EOF);
 
-                if( CSV.record ){
+                if (CSV.record) {
                     CSV.token_end();
                     CSV.record_end();
                 }
@@ -108,9 +108,9 @@
                 break;
             }
 
-            if( CSV.record == null ){
+            if (CSV.record == null) {
                 // if relaxed mode, ignore blank lines
-                if( CSV.RELAXED && (c == LF || c == CR && str[CSV.offset + 1] == LF) ){
+                if (CSV.RELAXED && (c == LF || c == CR && str[CSV.offset + 1] == LF)) {
                     continue;
                 }
                 CSV.record_begin();
@@ -119,17 +119,16 @@
             // pre-token: look for start of escape sequence
             if (CSV.state == PRE_TOKEN) {
 
-                if ( (c === SPACE || c === TAB) && CSV.next_nonspace() == QUOTE ){
-                    if( CSV.RELAXED || CSV.IGNORE_QUOTE_WHITESPACE ) {
+                if ((c === SPACE || c === TAB) && CSV.next_nonspace() == QUOTE) {
+                    if (CSV.RELAXED || CSV.IGNORE_QUOTE_WHITESPACE) {
                         continue;
-                    }
-                    else {
+                    } else {
                         // not technically an error, but ambiguous and hard to debug otherwise
                         CSV.warn(CSV.WARN_SPACE);
                     }
                 }
 
-                if (c == QUOTE && ! CSV.IGNORE_QUOTES) {
+                if (c == QUOTE && !CSV.IGNORE_QUOTES) {
                     CSV.debug("...escaped start", c);
                     CSV.escaped = true;
                     CSV.state = MID_TOKEN;
@@ -145,14 +144,12 @@
                         CSV.debug("...escaped quote", c);
                         CSV.token += QUOTE;
                         CSV.offset++;
-                    }
-                    else {
+                    } else {
                         CSV.debug("...escaped end", c);
                         CSV.escaped = false;
                         CSV.state = POST_TOKEN;
                     }
-                }
-                else {
+                } else {
                     CSV.token += c;
                     CSV.debug("...escaped add", c, CSV.token);
                 }
@@ -160,39 +157,34 @@
             }
 
             // fall-through: mid-token or post-token, not escaped
-            if (c == CR ) {
-                if( str[CSV.offset] == LF  )
+            if (c == CR) {
+                if (str[CSV.offset] == LF)
                     CSV.offset++;
-                else if( ! CSV.CARRIAGE_RETURN_OK )
+                else if (!CSV.CARRIAGE_RETURN_OK)
                     CSV.error(CSV.ERROR_CHAR);
                 CSV.token_end();
                 CSV.record_end();
-            }
-            else if (c == LF) {
-                if( ! (CSV.LINE_FEED_OK || CSV.RELAXED) )
+            } else if (c == LF) {
+                if (!(CSV.LINE_FEED_OK || CSV.RELAXED))
                     CSV.error(CSV.ERROR_CHAR);
                 CSV.token_end();
                 CSV.record_end();
-            }
-            else if (c == CSV.COLUMN_SEPARATOR) {
+            } else if (c == CSV.COLUMN_SEPARATOR) {
                 CSV.token_end();
-            }
-            else if( CSV.state == MID_TOKEN ){
+            } else if (CSV.state == MID_TOKEN) {
                 CSV.token += c;
                 CSV.debug("...add", c, CSV.token);
-            }
-            else if ( c === SPACE || c === TAB) {
-                if (! CSV.IGNORE_QUOTE_WHITESPACE )
-                    CSV.error(CSV.WARN_SPACE );
-            }
-            else if( ! CSV.RELAXED ){
+            } else if (c === SPACE || c === TAB) {
+                if (!CSV.IGNORE_QUOTE_WHITESPACE)
+                    CSV.error(CSV.WARN_SPACE);
+            } else if (!CSV.RELAXED) {
                 CSV.error(CSV.ERROR_CHAR);
             }
         }
         return result;
     };
 
-    CSV.reset = function () {
+    CSV.reset = function() {
         CSV.state = null;
         CSV.token = null;
         CSV.escaped = null;
@@ -202,29 +194,28 @@
         CSV.str = null;
     };
 
-    CSV.next_nonspace = function () {
+    CSV.next_nonspace = function() {
         var i = CSV.offset;
         var c;
-        while( i < CSV.str.length ) {
+        while (i < CSV.str.length) {
             c = CSV.str[i++];
-            if( !( c == SPACE || c === TAB ) ){
+            if (!(c == SPACE || c === TAB)) {
                 return c;
             }
         }
         return null;
     };
 
-    CSV.record_begin = function () {
+    CSV.record_begin = function() {
         CSV.escaped = false;
         CSV.record = [];
         CSV.token_begin();
         CSV.debug("record_begin");
     };
 
-    CSV.record_end = function () {
+    CSV.record_end = function() {
         CSV.state = POST_RECORD;
-        if( ! (CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED)
-            && CSV.result.length > 0 && CSV.record.length !=  CSV.result[0].length ){
+        if (!(CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED) && CSV.result.length > 0 && CSV.record.length != CSV.result[0].length) {
             CSV.error(CSV.ERROR_EOL);
         }
         CSV.result.push(CSV.record);
@@ -232,30 +223,27 @@
         CSV.record = null;
     };
 
-    CSV.resolve_type = function (token) {
-        if( token.match(/^\d+(\.\d+)?$/) ){
+    CSV.resolve_type = function(token) {
+        if (token.match(/^\d+(\.\d+)?$/)) {
             token = parseFloat(token);
-        }
-        else if( token.match(/^(true|false)$/i) ){
-            token = Boolean( token.match(/true/i) );
-        }
-        else if(token === "undefined" ){
+        } else if (token.match(/^(true|false)$/i)) {
+            token = Boolean(token.match(/true/i));
+        } else if (token === "undefined") {
             token = undefined;
-        }
-        else if(token === "null" ){
+        } else if (token === "null") {
             token = null;
         }
         return token;
     };
 
-    CSV.token_begin = function () {
+    CSV.token_begin = function() {
         CSV.state = PRE_TOKEN;
         // considered using array, but http://www.sitepen.com/blog/2008/05/09/string-performance-an-analysis/
         CSV.token = "";
     };
 
-    CSV.token_end = function () {
-        if( CSV.DETECT_TYPES ) {
+    CSV.token_end = function() {
+        if (CSV.DETECT_TYPES) {
             CSV.token = CSV.resolve_type(CSV.token);
         }
         CSV.record.push(CSV.token);
@@ -263,47 +251,49 @@
         CSV.token_begin();
     };
 
-    CSV.debug = function (){
-        if( CSV.DEBUG )
+    CSV.debug = function() {
+        if (CSV.DEBUG)
             console.log(arguments);
     };
 
-    CSV.dump = function (msg) {
+    CSV.dump = function(msg) {
         return [
-            msg , "at char", CSV.offset, ":",
-            CSV.str.substr(CSV.offset- 50, 50)
-                .replace(/\r/mg,"\\r")
-                .replace(/\n/mg,"\\n")
-                .replace(/\t/mg,"\\t")
+            msg, "at char", CSV.offset, ":",
+            CSV.str.substr(CSV.offset - 50, 50)
+            .replace(/\r/mg, "\\r")
+            .replace(/\n/mg, "\\n")
+            .replace(/\t/mg, "\\t")
         ].join(" ");
     };
 
-    CSV.error = function (err){
+    CSV.error = function(err) {
         var msg = CSV.dump(err);
         CSV.reset();
         throw msg;
     };
 
-    CSV.warn = function (err){
+    CSV.warn = function(err) {
         var msg = CSV.dump(err);
         try {
-            console.warn( msg );
+            console.warn(msg);
             return;
         } catch (e) {}
 
         try {
-            console.log( msg );
+            console.log(msg);
         } catch (e) {}
 
     };
 
     (function(name, context, definition) {
-            if (typeof module != 'undefined' && module.exports) module.exports = definition();
-            else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
-            else context[name] = definition();
-        }('CSV', Function('return this')(), function()
-            { return CSV; }
-        )
-    );
+        var define;
+        if (typeof module != 'undefined' && module.exports) module.exports = definition();
+        else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
+        else context[name] = definition();
+    }('CSV', function() {
+        return this;
+    }(), function() {
+        return CSV;
+    }));
 
 })();
