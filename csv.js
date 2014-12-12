@@ -192,6 +192,51 @@
         return result;
     };
 
+    CSV.json = function () {
+	var s = new require('stream').Transform({objectMode: true})
+	s._transform = function(chunk, encoding, done) {
+	    s.push(JSON.stringify(chunk.toString())+require('os').EOL)
+	    done()
+	}
+	return s
+    }
+
+    /**
+     * @name CSV.stream
+     * @function
+     * @description stream a CSV file
+     * @example
+     * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.json()).pipe(process.stdout)"
+     */
+    CSV.stream = function () {
+	var s = new require('stream').Transform({objectMode: true})
+	s.EOL = '\n'
+	s.prior = ""
+	s.emitter = function(s) {
+	    return function(e) {
+		s.push(CSV.parse(e+s.EOL))
+	    }
+	}(s);
+
+	s._transform = function(chunk, encoding, done) {
+	    var lines = (this.prior == "") ?
+		chunk.toString().split(this.EOL) :
+		(this.prior + chunk.toString()).split(this.EOL)
+	    this.prior = lines.pop();
+	    lines.forEach(this.emitter)
+	    done()
+	}
+
+	s._flush = function(done) {
+	    if (this.prior != "") {
+		this.emitter(this.prior)
+		this.prior = ""
+	    }
+	    done()
+	}
+	return s
+    }
+    
     CSV.reset = function () {
         CSV.state = null;
         CSV.token = null;
