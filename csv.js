@@ -346,11 +346,10 @@
     // eg.  var CSV = require("CSV"); CSV.parse(...);
     if ( typeof module != 'undefined' && module.exports) {
         module.exports = CSV;
-        return;
     }
 
     // CommonJS http://wiki.commonjs.org/wiki/Modules
-    // eg.  var CSV = require("CSV"); CSV.parse(...);
+    // eg.  var CSV = require("CSV").CSV; CSV.parse(...);
     else if (typeof exports != 'undefined' ) {
         exports.CSV = CSV;
     }
@@ -361,12 +360,11 @@
         define([], function () {
             return CSV;
         });
-        return;
     }
 
-    // .. else global var
+    // standard js global
     // eg. CSV.parse(...);
-    if( global ){
+    else if( global ){
         global.CSV = CSV;
     }
 
