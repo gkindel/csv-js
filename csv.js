@@ -18,10 +18,10 @@
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
 
- Author Greg Kindel (twitter @gkindel), 2013
+ Author Greg Kindel (twitter @gkindel), 2014
  */
 
-(function () {
+(function (global) {
     'use strict';
     /**
      * @name CSV
@@ -341,13 +341,33 @@
 
     };
 
-    (function(name, context, definition) {
-            if (typeof module != 'undefined' && module.exports) module.exports = definition();
-            else if (typeof define == 'function' && typeof define.amd == 'object') define(definition);
-            else context[name] = definition();
-        }('CSV', function(){return this;}(), function()
-            { return CSV; }
-        )
-    );
 
-})();
+    // Node, PhantomJS, etc
+    // eg.  var CSV = require("CSV"); CSV.parse(...);
+    if ( typeof module != 'undefined' && module.exports) {
+        module.exports = CSV;
+        return;
+    }
+
+    // CommonJS http://wiki.commonjs.org/wiki/Modules
+    // eg.  var CSV = require("CSV"); CSV.parse(...);
+    else if (typeof exports != 'undefined' ) {
+        exports.CSV = CSV;
+    }
+
+    // AMD https://github.com/amdjs/amdjs-api/wiki/AMD
+    // eg.  require(['./csv.js'], function (CSV) { CSV.parse(...); } );
+    else if (typeof define == 'function' && typeof define.amd == 'object'){
+        define([], function () {
+            return CSV;
+        });
+        return;
+    }
+
+    // .. else global var
+    // eg. CSV.parse(...);
+    if( global ){
+        global.CSV = CSV;
+    }
+
+})(this);
