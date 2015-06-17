@@ -1,8 +1,11 @@
 {
-  "name": "`pawlik/csv_js",
+  "name": "pawlik-csv-js",
   "description": "A Comma-Separated Values parser for JavaScript. Standards-based, stand alone, and no regular expressions.",
   "main": "csv.js",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
+  "bin": {
+    "csv-js-linter": "./bin/csv-js-linter"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gkindel/CSV-JS"
