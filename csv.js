@@ -200,7 +200,8 @@
      * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.stream.json()).pipe(process.stdout)"
      */
     CSV.stream = function () {
-        var s = new require('stream').Transform({objectMode: true});
+        var stream = require('stream');
+        var s = new stream.Transform({objectMode: true});
         s.EOL = '\n';
         s.prior = "";
         s.emitter = function(s) {
@@ -229,14 +230,16 @@
     };
 
     CSV.stream.json = function () {
-        var s = new require('stream').Transform({objectMode: true});
+        var os = require('os');
+        var stream = require('stream');
+        var s = new streamTransform({objectMode: true});
         s._transform = function(chunk, encoding, done) {
-            s.push(JSON.stringify(chunk.toString())+require('os').EOL);
+            s.push(JSON.stringify(chunk.toString())+os.EOL);
             done()
         };
         return s
     };
-    
+
     CSV.reset = function () {
         CSV.state = null;
         CSV.token = null;
