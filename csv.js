@@ -280,7 +280,7 @@
     };
 
     CSV.resolve_type = function (token) {
-        if( token.match(/^\d+(\.\d+)?$/) ){
+        if( token.match(/^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/) ){
             token = parseFloat(token);
         }
         else if( token.match(/^(true|false)$/i) ){

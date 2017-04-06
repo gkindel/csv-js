@@ -65,6 +65,10 @@
                     CSV.parse("1,.2,3.,4.5,6.7.8"),
                     [[1,'.2','3.',4.5,'6.7.8']] );
 
+            unit.assert("negative numbers, leading + and numbers with exponent",
+                    CSV.parse("-1,+1,1.0e0,1e+2,1E-3"),
+                    [[-1,+1,1,100,0.001]] );
+
             unit.assert("booleans, null, unefined",
                     CSV.parse("1,true,null,false,undefined"),
                     [[1,true,null,false,undefined]] );
