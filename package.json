@@ -1,5 +1,6 @@
 {
   "name": "CSV-JS",
+  "version": "1.0.0",
   "description": "A Comma-Separated Values parser for JavaScript. Standards-based, stand alone, and no regular expressions.",
   "main": "csv.js",
   "repository": {
