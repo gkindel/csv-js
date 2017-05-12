@@ -90,9 +90,9 @@
                     CSV.parse('1,"2,two","3\nthree","4""four"'),
                     [[ 1, "2,two", "3\nthree", "4\"four" ]] );
 
-            unit.assert("quotes, escaping",
-                    CSV.parse('1,"2,two","3\nthree","4""four"'),
-                    [[ 1, "2,two", "3\nthree", "4\"four" ]] );
+            unit.assert("quotes, unescaped",
+                    CSV.parse('1,"2,two","3\nthree","4"four""'),
+                    [[ 1, "2,two", "3\nthree", "4\"four\"" ]] );
 
             unit.assert("trailing quotation",
                     CSV.parse('1",2"'),
@@ -112,6 +112,8 @@
                     '1997,Ford,E350,"ac, abs, moon",3000.00\r\n' +
                     '1999,Chevy,"Venture ""Extended Edition""","",4900.00\r\n' +
                     '1999,Chevy,"Venture ""Extended Edition, Very Large""",,5000.00\r\n' +
+                    '1999,Chevy,"Venture "Extended Edition, Very Large"",,5000.00\r\n' +
+                    '2015,Chevy,"Venture "Extended Edition", "Very Large" roof",,5000.00\r\n' +
                     '1996,Jeep,Grand Cherokee,"MUST SELL!\r\nair, moon roof, loaded",4799.00\r\n' +
                     '"weird""""quotes ",true,false,123,45.6\r\n' +
                     '.7,8.,9.1.2,null,undefined\r\n' +
@@ -125,6 +127,8 @@
                         [1997, 'Ford', 'E350', 'ac, abs, moon', 3000],
                         [1999,'Chevy', 'Venture "Extended Edition"', '', 4900 ],
                         [1999,'Chevy', 'Venture "Extended Edition, Very Large"','', 5000],
+                        [1999,'Chevy', 'Venture "Extended Edition, Very Large"','', 5000],
+                        [2015,'Chevy', 'Venture "Extended Edition", "Very Large" roof','', 5000],
                         [1996,'Jeep', 'Grand Cherokee', 'MUST SELL!\r\nair, moon roof, loaded' ,4799],
                         ['weird""quotes ', true, false, 123,45.6],
                         ['.7',"8.","9.1.2",null,undefined],
@@ -198,6 +202,9 @@
             unit.assert("ignore trailing whitespace after quotes",
                     CSV.parse('1,"2" , "3"'),
                     [[1,2,3]] );
+            unit.assert("ignore trailing whitespace after quotes with unescaped quotes",
+                    CSV.parse('1,""2"" , "3"'),
+                    [[1,'"2"',3]] );
 
             CSV.LINE_FEED_OK = true;
             unit.assert("CSV.LINE_FEED_OK is true", CSV.LINE_FEED_OK);

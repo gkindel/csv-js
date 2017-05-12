@@ -55,7 +55,8 @@
     var PRE_TOKEN = 0,
         MID_TOKEN = 1,
         POST_TOKEN = 2,
-        POST_RECORD = 4;
+        POST_RECORD = 4,
+        MID_QUOTE = 5;
     /**
      * @name CSV.parse
      * @function
@@ -139,12 +140,28 @@
             }
 
             // mid-token and escaped, look for sequences and end quote
-            if (CSV.state == MID_TOKEN && CSV.escaped) {
+            if ((CSV.state == MID_TOKEN || CSV.state == MID_QUOTE) && CSV.escaped) {
                 if (c == QUOTE) {
-                    if (str[CSV.offset] == QUOTE) {
+                    if (str[CSV.offset] == QUOTE && CSV.state != MID_QUOTE) {
                         CSV.debug("...escaped quote", c);
                         CSV.token += QUOTE;
                         CSV.offset++;
+                    }
+                    else if (str[CSV.offset] &&
+                            str[CSV.offset] != CSV.COLUMN_SEPARATOR &&
+                            str[CSV.offset] != LF &&
+                            str[CSV.offset] != CR &&
+                            str[CSV.offset] != SPACE &&
+                            CSV.state != MID_QUOTE
+                    ) {
+                        CSV.debug("...quote start", c);
+                        CSV.token += QUOTE;
+                        CSV.state = MID_QUOTE;
+                    }
+                    else if (CSV.state == MID_QUOTE){
+                        CSV.debug("...quote end", c);
+                        CSV.token += QUOTE;
+                        CSV.state = MID_TOKEN;
                     }
                     else {
                         CSV.debug("...escaped end", c);
