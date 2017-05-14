@@ -14,7 +14,7 @@ Built to the <a href="http://www.ietf.org/rfc/rfc4180.txt">rfc4180</a> standard,
 
 Example:
 ----
-[Live Example](http://gkindel.github.io/csv-js/csv.html)
+[Live Example](http://gkindel.github.io/CSV-JS/csv.html)
 
 Use:
 ----
@@ -110,7 +110,7 @@ Warnings:
 
 Unit Test:
 ----
-[Unit Test](http://gkindel.github.io/csv-js/unit/)
+[Unit Test](http://gkindel.github.io/CSV-JS/unit/)
 
 License:
 ----
