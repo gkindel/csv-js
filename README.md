@@ -16,6 +16,12 @@ Example:
 ----
 [Live Example](http://gkindel.github.io/CSV-JS/csv.html)
 
+
+Install
+----
+`npm install csv-js --save-dev`
+
+
 Use:
 ----
 Simple:

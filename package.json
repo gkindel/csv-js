@@ -5,11 +5,20 @@
   "main": "csv.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gkindel/csv-js"
+    "url": "git+https://github.com/gkindel/csv-js.git"
   },
-  "author": "Greg Kindel (twitter @gkindel), 2017",
+  "author": "Greg Kindel (twitter @gkindel)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/gkindel/csv-js/issues"
-  }
+  },
+  "homepage": "https://github.com/gkindel/csv-js#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "comma",
+    "parse",
+    "csv"
+  ]
 }
