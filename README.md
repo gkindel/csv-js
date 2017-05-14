@@ -1,4 +1,4 @@
-# CSV-JS 
+# csv-js 
 A Comma-Separated Values parser for JavaScript
 
 -----
@@ -14,7 +14,7 @@ Built to the <a href="http://www.ietf.org/rfc/rfc4180.txt">rfc4180</a> standard,
 
 Example:
 ----
-[Live Example](http://gkindel.github.io/CSV-JS/csv.html)
+[Live Example](http://gkindel.github.io/csv-js/csv.html)
 
 Use:
 ----
@@ -110,7 +110,7 @@ Warnings:
 
 Unit Test:
 ----
-[Unit Test](http://gkindel.github.io/CSV-JS/unit/)
+[Unit Test](http://gkindel.github.io/csv-js/unit/)
 
 License:
 ----
@@ -128,4 +128,4 @@ all copies or substantial portions of the Software.
 
 Author:
 ---- 
-Greg Kindel (twitter <a href="http://twitter.com/gkindel">@gkindel</a>), 2014
+Greg Kindel (twitter <a href="http://twitter.com/gkindel">@gkindel</a>), 2017
