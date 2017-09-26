@@ -134,11 +134,21 @@
 
         unit.test("Custom COLUMN_SEPARATOR", function () {
             var originalSeparator = CSV.COLUMN_SEPARATOR;
-            CSV.COLUMN_SEPARATOR = ";"
 
+            CSV.COLUMN_SEPARATOR = ";"
             unit.assert("Using semi-colons",
                     CSV.parse('1;2;3\r\n"foo";22;"bar"'),
                     [[1,2,3],["foo",22,"bar"]] );
+
+            CSV.COLUMN_SEPARATOR = "\t"
+            unit.assert("Using tab characters(tsv)",
+                    CSV.parse('1\t2\t3\r\n"foo"\t22\t"bar"'),
+                    [[1,2,3],["foo",22,"bar"]] );
+
+            CSV.COLUMN_SEPARATOR = /\s+/;
+            unit.assert("Using RegExt /\\s+/",
+                    CSV.parse('1\t2 3\r\n"foo foo"  22\t"bar"'),
+                    [[1,2,3],["foo foo",22,"bar"]] );
 
             CSV.COLUMN_SEPARATOR = originalSeparator;
         });
