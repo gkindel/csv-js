@@ -81,6 +81,9 @@
      */
     CSV.parse = function (str) {
         var result = CSV.result = [];
+        CSV.COLUMN_SEPARATOR = CSV.COLUMN_SEPARATOR instanceof RegExp ?
+            new RegExp('^' + CSV.COLUMN_SEPARATOR.source) : CSV.COLUMN_SEPARATOR;
+
         CSV.offset = 0;
         CSV.str = str;
         CSV.record_begin();
@@ -174,7 +177,7 @@
                 CSV.token_end();
                 CSV.record_end();
             }
-            else if (c == CSV.COLUMN_SEPARATOR) {
+            else if (CSV.test_regex_separater(str) || CSV.COLUMN_SEPARATOR == c) {
                 CSV.token_end();
             }
             else if( CSV.state == MID_TOKEN ){
@@ -227,6 +230,21 @@
             done()
         };
         return s
+    };
+
+    CSV.test_regex_separater = function(str) {
+        if (!(CSV.COLUMN_SEPARATOR instanceof RegExp)) {
+            return false;
+        }
+
+        var match;
+        str = str.slice(CSV.offset - 1);
+        match = CSV.COLUMN_SEPARATOR.exec(str);
+        if (match) {
+            CSV.offset += match[0].length - 1;
+        }
+
+        return match !== null;
     };
 
     CSV.stream.json = function () {
